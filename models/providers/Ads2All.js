@@ -9,6 +9,12 @@ function Provider(name, settings) {
   this.name = name;
   this.url = settings.url;
   this.key = settings.key;
+  this.map = {
+    id: 'appStoreUrl',
+    name: 'name',
+    rating: 'rating',
+    image: 'imageUrl'
+  };
 }
 
 Provider.prototype.getTopApps = function(n, req, callback) {
@@ -20,10 +26,11 @@ Provider.prototype.getTopApps = function(n, req, callback) {
       callback([]);
     }
 
-    // Sort
+    // Get top n apps
+    var topApps = datamgr.getTop(n, 'rating', body);
 
-    // Normalize
-
+    // Normalize and return
+    callback(datamgr.normalizeArray(this.map, topApps))
   });
 };
 

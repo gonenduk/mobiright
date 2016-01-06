@@ -36,9 +36,10 @@ var aggregator = {
 
     function finish(providerTopApps) {
       // Another provider has finished
+      topApps.concat(providerTopApps);
       numFinished++;
-      
-      // Make sure all providers finished retrieving their top apps before
+
+      // Make sure all providers finished retrieving their top apps
       if (numFinished < this.numProviders)
         return;
 
