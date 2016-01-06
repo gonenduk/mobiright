@@ -19,26 +19,35 @@ function Provider(name, settings) {
 
 Provider.prototype.getTopApps = function(n, req, callback) {
   // Get top apps from provider
-  var uri = this.url + "/getapps/{" + this.key + "}";
+  var uri = this.url + "/getapps/" + this.key;
   var formData = {
     ip: req.ip,
-    ua: req.userAgent
+    ua: req.headers['user-agent']
   };
-  request.post(uri, formData, function (error, res, body) {
-    if (err) {
-      console.log(err);
-      callback([]);
+  request.post(uri, formData, afterProvider.bind(this));
+
+  // Callback function after request return
+  function afterProvider(err, res, body) {
+    // On error log return empty results
+    if (err || res.statusCode != 200) {
+      console.log("Could not get from Ads4You:");
+      console.log(body);
+      return callback([]);
     }
 
+    // Convert JSON to array
+    var topApps = JSON.parse(body).offers;
+
     // Concat games and tools
-    var topApps = body.games.concat(body.tools);
+    topApps = topApps.games.concat(topApps.tools);
 
     // Get top n apps
     topApps = datamgr.getTop(n, 'rate', topApps);
 
     // Normalize and return
+    console.log(datamgr.normalizeArray(this.map, topApps));
     callback(datamgr.normalizeArray(this.map, topApps))
-  });
+  }
 };
 
 

@@ -31,7 +31,7 @@ var aggregator = {
 
     // Iterate on providers and get their top apps
     for (name in this.providers) {
-      this.providers[name].getTopApps(n, req, finish);
+      this.providers[name].getTopApps(n, req, finish.bind(this));
     }
 
     function finish(providerTopApps) {

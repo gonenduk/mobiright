@@ -20,14 +20,22 @@ function Provider(name, settings) {
 Provider.prototype.getTopApps = function(n, req, callback) {
   // Get top apps from provider
   var uri = this.url + "/api?" + "key=" + this.key + "&realip=" + req.ip;
-  request(uri, function (error, res, body) {
-    if (err) {
-      console.log(err);
-      callback([]);
+  request(uri, afterProvider.bind(this));
+
+  // Callback function after request return
+  function afterProvider(err, res, body) {
+    // On error log return empty results
+    if (err || res.statusCode != 200) {
+      console.log("Could not get from Ads2All:");
+      console.log(body);
+      return callback([]);
     }
 
+    // Convert JSON to array
+    var topApps = JSON.parse(body).result;
+
     // Get top n apps
-    var topApps = datamgr.getTop(n, 'rating', body);
+    topApps = datamgr.getTop(n, 'rating', topApps);
 
     // Normalize (convert to our property names)
     topApps = datamgr.normalizeArray(this.map, topApps);
@@ -43,7 +51,7 @@ Provider.prototype.getTopApps = function(n, req, callback) {
 
     // Return top apps
     callback(topApps);
-  });
+  }
 };
 
 
