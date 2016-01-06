@@ -21,13 +21,19 @@ var aggregator = {
 
   // Get top n rated apps from all providers
   getTop: function (n) {
-    // Iterate on providers and find top n rated apps
+    // Iterate on providers and concat their tops
+    var tops = [];
+    for (name in this.providers) {
+      tops.concat(this.providers[name].getTop(n));
+    }
+
+    // Return only top n apps
+    return datamgr.getTop(n);
   }
 };
 
 // Initialize aggregator with providers from config file
 for (name in config.providers) {
-  var p = require('./providers/' + name);
   aggregator.add(name, config.providers[name]);
 }
 

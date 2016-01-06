@@ -10,6 +10,14 @@ function Provider(name, settings) {
   this.key = settings.key;
 }
 
+Provider.prototype.getTop = function(n) {
+  // Get top apps from provider
+
+  // Sort
+
+  // Normalize
+};
+
 
 // Export provider constructor
 module.exports = Provider;

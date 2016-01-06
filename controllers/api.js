@@ -7,7 +7,7 @@ var aggregator = require('../models/aggregator');
  */
 
 router.get('/top', function(req, res, next) {
-  res.render('index', { title: 'Backend Server' });
+  res.json(aggregator.getTop(3));
 });
 
 
