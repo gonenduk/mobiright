@@ -19,15 +19,22 @@ function Provider(name, settings) {
 
 Provider.prototype.getTopApps = function(n, req, callback) {
   // Get top apps from provider
-  var uri = this.url + "/api?" + "key=" + this.key + "&realip=" + req.ip;
-  request(uri, function (error, res, body) {
+  var uri = this.url + "/getapps/{" + this.key + "}";
+  var formData = {
+    ip: req.ip,
+    ua: req.userAgent
+  };
+  request.post(uri, formData, function (error, res, body) {
     if (err) {
       console.log(err);
       callback([]);
     }
 
+    // Concat games and tools
+    var topApps = body.games.concat(body.tools);
+
     // Get top n apps
-    var topApps = datamgr.getTop(n, 'rating', body);
+    topApps = datamgr.getTop(n, 'rate', topApps);
 
     // Normalize and return
     callback(datamgr.normalizeArray(this.map, topApps))
