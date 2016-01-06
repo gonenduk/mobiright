@@ -24,7 +24,7 @@ Provider.prototype.getTopApps = function(n, req, callback) {
     ip: req.ip,
     ua: req.headers['user-agent']
   };
-  request.post(uri, formData, afterProvider.bind(this));
+  request.post({url: uri, form: formData}, afterProvider.bind(this));
 
   // Callback function after request return
   function afterProvider(err, res, body) {
@@ -38,14 +38,15 @@ Provider.prototype.getTopApps = function(n, req, callback) {
     // Convert JSON to array
     var topApps = JSON.parse(body).offers;
 
-    // Concat games and tools
-    topApps = topApps.games.concat(topApps.tools);
+    // Concat games and tools (if exist)
+    var games = 'games' in topApps ? topApps.games : [];
+    var tools = 'tools' in topApps ? topApps.tools : [];
+    topApps = games.concat(tools);
 
     // Get top n apps
     topApps = datamgr.getTop(n, 'rate', topApps);
 
     // Normalize and return
-    console.log(datamgr.normalizeArray(this.map, topApps));
     callback(datamgr.normalizeArray(this.map, topApps))
   }
 };
