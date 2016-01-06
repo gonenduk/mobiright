@@ -1,5 +1,27 @@
 extends layout
 
 block content
-  h1= title
-  p Server is running...
+  h1.title Loading...
+
+  ol(type='1', id='adsContainer')
+    script(type='text/javascript', id='adsTemplate')
+      li
+        p ${name}
+        a(href='${appStoreUrl}')
+          img(src='${imageUrl}')
+
+  script(type='text/javascript', src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.4.js')
+  script(type='text/javascript' src='http://ajax.aspnetcdn.com/ajax/jquery.templates/beta1/jquery.tmpl.js')
+
+
+  script(type='text/javascript').
+    $.ajax({url: '/top', success: function(ads) {
+      console.log(ads);
+
+      // Render the books using the template
+      $('#adsTemplate').tmpl(ads).appendTo('#adsContainer');
+      $('.title').append(' Done!');
+
+    }, error: function () {
+      $('.title').append(' Failed!');
+    }});
