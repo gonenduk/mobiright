@@ -7,7 +7,9 @@ var aggregator = require('../models/aggregator');
  */
 
 router.get('/top', function(req, res, next) {
-  res.json(aggregator.getTop(3));
+  aggregator.getTopApps(3, req, function (topApps) {
+    res.json(topApps);
+  });
 });
 
 

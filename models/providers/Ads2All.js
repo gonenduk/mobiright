@@ -1,4 +1,5 @@
 var datamgr = require('../datamgr');
+var request = require('request');
 
 /**
  * Ads2All object
@@ -10,12 +11,20 @@ function Provider(name, settings) {
   this.key = settings.key;
 }
 
-Provider.prototype.getTop = function(n) {
+Provider.prototype.getTopApps = function(n, req, callback) {
   // Get top apps from provider
+  var uri = this.url + "/api?" + "key=" + this.key + "&realip=" + req.ip;
+  request(uri, function (error, res, body) {
+    if (err) {
+      console.log(err);
+      callback([]);
+    }
 
-  // Sort
+    // Sort
 
-  // Normalize
+    // Normalize
+
+  });
 };
 
 

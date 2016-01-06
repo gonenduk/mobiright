@@ -6,29 +6,45 @@ var datamgr = require('./datamgr');
  */
 
 var aggregator = {
-  providers: {},       // will hold a map of providers (by name)
+  providers: {},        // will hold a map of providers (by name)
+  numProviders: 0,      // number of providers
 
   // Add a provider (can be used to add a provider in runtime as well with a future API)
   add: function (name, settings) {
     var p = require('./providers/' + name);
     this.providers[name] = new p(name, settings);
+    this.numProviders++;
   },
 
   // Delete a provider (by name)
   delete: function (name) {
-    delete this.providers[name];
+    if (name in this.providers) {
+      delete this.providers[name];
+      this.numProviders--;
+    }
   },
 
   // Get top n rated apps from all providers
-  getTop: function (n) {
-    // Iterate on providers and concat their tops
-    var tops = [];
+  getTopApps: function (n, req, callback) {
+    var topApps = [];
+    var numFinished = 0;
+
+    // Iterate on providers and get their top apps
     for (name in this.providers) {
-      tops.concat(this.providers[name].getTop(n));
+      this.providers[name].getTopApps(n, req, finish);
     }
 
-    // Return only top n apps
-    return datamgr.getTop(n);
+    function finish(providerTopApps) {
+      // Another provider has finished
+      numFinished++;
+      
+      // Make sure all providers finished retrieving their top apps before
+      if (numFinished < this.numProviders)
+        return;
+
+      // Return only top n apps
+      callback(datamgr.getTop(n, 'rating', topApps));
+    }
   }
 };
 

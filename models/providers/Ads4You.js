@@ -10,8 +10,10 @@ function Provider(name, settings) {
   this.key = settings.key;
 }
 
-Provider.prototype.getTop = function(n) {
+Provider.prototype.getTopApps = function(n, req, callback) {
   // Get top apps from provider
+
+  // Concat games and tools
 
   // Sort
 
