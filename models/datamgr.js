@@ -26,13 +26,6 @@ module.exports = {
   },
 
   /**
-   * Concat list of arrays
-   */
-  concatArrays: function (arr1, arr2) {
-    return arr1.concat(arr2);
-  },
-
-  /**
    * Return top n elements in array according to specific field
    */
   getTop: function (n, prop, arr) {

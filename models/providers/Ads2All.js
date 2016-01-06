@@ -29,8 +29,20 @@ Provider.prototype.getTopApps = function(n, req, callback) {
     // Get top n apps
     var topApps = datamgr.getTop(n, 'rating', body);
 
-    // Normalize and return
-    callback(datamgr.normalizeArray(this.map, topApps))
+    // Normalize (convert to our property names)
+    topApps = datamgr.normalizeArray(this.map, topApps);
+
+    // Replace app id with link to AppStore (Apple or Android)
+    topApps.forEach(function (app) {
+      var id = app.appStoreUrl;
+      if (isNaN(id))
+        app.appStoreUrl = "http://play.google.com/store/apps/details?id=" + id;
+      else
+        app.appStoreUrl = "https://itunes.apple.com/app/id" + id;
+    });
+
+    // Return top apps
+    callback(topApps);
   });
 };
 
